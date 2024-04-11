@@ -1,10 +1,10 @@
 <template>
   <Header />
   <div class="container">
-    <Balance :total="total" />
-    <IncomeExpenses />
+    <Balance :total="+total" />
+    <IncomeExpenses :income="+income" :expenses="+expenses"/>
     <TransactionList :transactions="transactions" />
-    <AddTransaction />
+    <AddTransaction @transactionSubmitted="handleTransactionSubmitted" />
   </div>
 </template>
 
@@ -15,7 +15,11 @@ import IncomeExpenses from './components/IncomeExpenses.vue';
 import TransactionList from './components/TransactionList.vue';
 import AddTransaction from './components/AddTransaction.vue';
 
+import {useToast} from 'vue-toastification';
+
 import { ref, computed } from 'vue'; // we need to add this to any object we want to be reactive
+
+const toast = useToast();
 
 const transactions = ref([
         { id: 1, text: 'Flower', amount: -19.99 },
@@ -24,10 +28,52 @@ const transactions = ref([
         { id: 4, text: 'Camera', amount: 150},
     ]);
 
+// Get total
 const total = computed(() => {
   return transactions.value.reduce((acc, transaction) => {
     return acc + transaction.amount; 
 
   }, 0); // this zero if for the accumulator to start
 })
+
+// Get income 
+const income = computed(() => {
+  return transactions.value
+  .filter((transaction) => transaction.amount > 0) // this checks if it is an income
+  .reduce((acc, transaction) => {
+    return acc + transaction.amount; 
+
+  }, 0)
+  .toFixed(2); // this zero if for the accumulator to start
+})
+
+// Get expenses
+const expenses = computed(() => {
+  return transactions.value
+  .filter((transaction) => transaction.amount < 0) // this checks if it is an expense
+  .reduce((acc, transaction) => {
+    return acc + transaction.amount; 
+
+  }, 0)
+  .toFixed(2); // this zero if for the accumulator to start
+});
+
+// Add transaction
+
+const handleTransactionSubmitted = (transactionData) =>{
+  transactions.value.push({
+    id: generateUniqueId(), 
+    text: transactionData.text, 
+    amount: transactionData.amount
+  });
+
+  toast.success('Transaction added'); 
+ 
+}
+
+// Generate unique ID 
+const generateUniqueId = () => {
+  return Math.floor(Math.random() * 10000)
+}
+
 </script>
