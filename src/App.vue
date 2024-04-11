@@ -1,7 +1,7 @@
 <template>
   <Header />
   <div class="container">
-    <Balance />
+    <Balance :total="total" />
     <IncomeExpenses />
     <TransactionList :transactions="transactions" />
     <AddTransaction />
@@ -15,7 +15,7 @@ import IncomeExpenses from './components/IncomeExpenses.vue';
 import TransactionList from './components/TransactionList.vue';
 import AddTransaction from './components/AddTransaction.vue';
 
-import { ref } from 'vue'; // we need to add this to any object we want to be reactive
+import { ref, computed } from 'vue'; // we need to add this to any object we want to be reactive
 
 const transactions = ref([
         { id: 1, text: 'Flower', amount: -19.99 },
@@ -23,4 +23,11 @@ const transactions = ref([
         { id: 3, text: 'Book', amount: -10 },
         { id: 4, text: 'Camera', amount: 150},
     ]);
+
+const total = computed(() => {
+  return transactions.value.reduce((acc, transaction) => {
+    return acc + transaction.amount; 
+
+  }, 0); // this zero if for the accumulator to start
+})
 </script>
