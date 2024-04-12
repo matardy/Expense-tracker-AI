@@ -12,12 +12,14 @@
             </select>
     </div>
     <ul id="list" class="list">
-        <li v-for="transaction in filteredTransactions" :key="transaction.id" :class="transaction.amount < 0 ? 'minus' : 'plus'">
+        <li v-for="transaction in filteredTransactions" @click="showTransactionDetails(transaction)" :key="transaction.id" :class="transaction.amount < 0 ? 'minus' : 'plus'">
             {{ transaction.text }} - {{ transaction.description }} ({{ transaction.category }})
             <span>${{ transaction.amount }}</span>
             <button @click="deleteTransaction(transaction.id)" class="delete-btn">x</button>
         </li>
     </ul>
+
+    <ModalComponent :transaction="selectedTransaction" :showModal="showModal" @close="showModal = false" />
 </template>
 
 <!-- <script>
@@ -52,10 +54,13 @@
 </script> -->
 <script setup>
 // this define the prop that was pass out in the App.vue
-
+import ModalComponent from './ModalComponent.vue'
 import { defineProps, ref, computed, defineEmits } from 'vue'; 
 
+const selectedTransaction = ref(null);
+const showModal = ref(false);
 const emit = defineEmits(['transactionDeleted'])
+const selectedCategory = ref('');
 
 const props = defineProps({
     transactions: {
@@ -64,7 +69,11 @@ const props = defineProps({
     }
 })
 
-const selectedCategory = ref('');
+const showTransactionDetails = (transaction) => {
+  selectedTransaction.value = transaction;
+  showModal.value = true;
+};
+
 
 const filteredTransactions = computed(() => {
     if (!selectedCategory.value) {
