@@ -8,7 +8,7 @@
         <div class="form-control">
             <label for="amount" >Amount <br /> 
             (negative - expense, positive - income)</label>
-        <input type="text" id="amount" v-model="amount" placeholder="Enter amount...">
+        <input type="number" id="amount" v-model.number="amount" placeholder="Enter amount...">
         </div>
         <button class="btn">Add transaction</button>
 
@@ -27,8 +27,14 @@
     const toast = useToast();
 
     const onSubmit = () => {
-        if(!text.value || !amount.value){
-            toast.error('Both fields must be filled');
+        if (!text.value.trim()){
+            toast.error('Text field mus be filled');
+            return;
+        }
+
+        // Validate if amount is a number and not NaN
+        if (!amount.value || isNaN(parseFloat(amount.value))) {
+            toast.error('Please enter a valid number for the amount');
             return;
         }
         
