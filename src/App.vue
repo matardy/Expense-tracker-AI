@@ -65,19 +65,19 @@ const expenses = computed(() => {
 
 // Add transaction
 
-const handleTransactionSubmitted = (transactionData) =>{
+const handleTransactionSubmitted = (transactionData) => {
   transactions.value.push({
-    id: generateUniqueId(), 
-    text: transactionData.text, 
+    id: generateUniqueId(),
+    text: transactionData.text,
+    description: transactionData.description, // Include description
+    category: transactionData.category,       // Include category
     amount: transactionData.amount
   });
 
-  // local storage integration
+  // Save updated transactions to local storage
   saveTransactionsToLocalStorage();
-
-  toast.success('Transaction added'); 
- 
-}
+  toast.success('Transaction added');
+};
 
 // Generate unique ID 
 const generateUniqueId = () => {
